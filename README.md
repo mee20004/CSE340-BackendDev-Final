@@ -50,6 +50,6 @@ Password for all test accounts: `P@$$w0rd!`
 
 ```bash
 pnpm install
-cp .env.example .env   # fill in DB_URL and SESSION_SECRET
+cp .env.example .env   # fill in DB_URL and SESSION_SECRET (Render uses DATABASE_URL automatically when linked)
 pnpm dev
 ```

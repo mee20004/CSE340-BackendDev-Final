@@ -3,9 +3,19 @@ import 'dotenv/config';
 
 const { Pool } = pg;
 
+const connectionString = process.env.DB_URL || process.env.DATABASE_URL;
+
+if (!connectionString) {
+    throw new Error(
+        'Missing database connection string. Set DB_URL (local) or DATABASE_URL (Render/Heroku).'
+    );
+}
+
 const pool = new Pool({
-    connectionString: process.env.DB_URL,
-    ssl: { rejectUnauthorized: false },
+    connectionString,
+    ssl: process.env.NODE_ENV === 'production'
+        ? { rejectUnauthorized: false }
+        : false,
 });
 
 const logging = process.env.ENABLE_SQL_LOGGING === 'true';
