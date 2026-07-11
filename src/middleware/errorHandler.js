@@ -19,6 +19,7 @@ export function globalErrorHandler(err, req, res, next) {
 
     res.status(status).render(view, {
         title,
+        currentUser: res.locals.currentUser ?? null,
         message: process.env.NODE_ENV === 'production' && status >= 500
             ? 'An unexpected error occurred.'
             : err.message,

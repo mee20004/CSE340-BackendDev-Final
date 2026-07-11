@@ -10,7 +10,7 @@
     <header class="site-header">
         <a href="/" class="brand">MedTap</a>
         <nav class="site-nav">
-            <% if (currentUser) { %>
+            <% if (typeof currentUser !== 'undefined' && currentUser) { %>
                 <% if (currentUser.role === 'patient') { %>
                     <a href="/patient/dashboard">My Dashboard</a>
                 <% } else { %>

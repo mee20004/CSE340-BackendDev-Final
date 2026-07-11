@@ -11,12 +11,25 @@ import patientRouter from './src/routes/patient.js';
 import { notFoundHandler, globalErrorHandler } from './src/middleware/errorHandler.js';
 import { attachUserToViews } from './src/middleware/auth.js';
 
+if (!process.env.SESSION_SECRET) {
+    throw new Error('Missing SESSION_SECRET environment variable.');
+}
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 const PgSession = connectPgSimple(session);
 
+if (process.env.NODE_ENV === 'production') {
+    app.set('trust proxy', 1);
+}
+
 app.set('view engine', 'ejs');
 app.set('views', './src/views');
+
+app.use((req, res, next) => {
+    res.locals.currentUser = null;
+    next();
+});
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -46,8 +59,15 @@ app.use('/', indexRouter);
 app.use(notFoundHandler);
 app.use(globalErrorHandler);
 
-app.listen(PORT, async () => {
+async function start() {
     await setupDatabase();
     await testConnection();
-    console.log(`Server is running on http://127.0.0.1:${PORT}`);
+    app.listen(PORT, () => {
+        console.log(`Server is running on http://127.0.0.1:${PORT}`);
+    });
+}
+
+start().catch((err) => {
+    console.error('Failed to start server:', err);
+    process.exit(1);
 });
